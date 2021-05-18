@@ -4,7 +4,9 @@ import com.cn.momo.annotation.AnnotationParse;
 import com.cn.momo.exception.BusinessException;
 import com.cn.momo.system.log.pojo.SysLog;
 import com.cn.momo.system.log.service.ISysLogService;
+import com.cn.momo.system.user.dto.UserCacheDTO;
 import com.cn.momo.system.user.pojo.User;
+import com.cn.momo.system.user.service.IUserService;
 import com.cn.momo.util.HttpUtil;
 import com.cn.momo.util.JsonUtil;
 import com.cn.momo.util.ResultUtil;
@@ -35,6 +37,8 @@ import java.util.Map;
 public class CallLogAspect {
     @Autowired
     private ISysLogService iSysLogService;
+    @Autowired
+    private IUserService iUserService;
 
     @Pointcut(value = "@annotation(com.cn.momo.annotation.CallLog)")
     public void callLog() {
@@ -72,7 +76,8 @@ public class CallLogAspect {
         }
 
         long timeLog = System.currentTimeMillis() - startTime;
-        logger.info("耗时 : {} ms\t调用地址：{}", timeLog, HttpUtil.getIP());
+        String ip = HttpUtil.getIP();
+        logger.info("耗时 : {} ms\t调用地址：{}", timeLog, ip);
 
         // 打印出参
         logger.info("出参 : {}", result);
@@ -97,10 +102,12 @@ public class CallLogAspect {
         }
 
         // 获取调用者id
-        if (args.length > 0 && User.class.getName().equals(args[0].getClass().getName())) {
-            User loginUser = (User) args[0];
-            call.setUserId(loginUser.getUserId());
-            call.setCallIp(loginUser.getLastIp());
+        try{
+            UserCacheDTO userCacheDTO = iUserService.getUser();
+            call.setUserId(userCacheDTO.getUserId());
+            call.setCallIp(userCacheDTO.getIp());
+        }catch (Exception e){
+            call.setCallIp(ip);
         }
 
         // 保存日志

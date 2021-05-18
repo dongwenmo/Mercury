@@ -13,23 +13,29 @@ import java.util.Objects;
  */
 public class HttpUtil {
     /**
-     * 
      * dongwenmo 2021-05-17
      */
-    public static HttpServletRequest getRequest() throws BusinessException{
-        try{
+    public static HttpServletRequest getRequest() throws BusinessException {
+        try {
             return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BusinessException(ErrorConfig.ERR_10003, "获取HttpServletRequest失败");
         }
     }
+
     /**
      * 通过request获取IP
      * dongwenmo 2021-05-15
      */
     public static String getIP() throws BusinessException {
-        HttpServletRequest request = getRequest();
+        return getIP(getRequest());
+    }
 
+    /**
+     * 通过request获取IP
+     * dongwenmo 2021-05-15
+     */
+    public static String getIP(HttpServletRequest request) throws BusinessException {
         String ip = request.getHeader("x-forwarded-for");
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");

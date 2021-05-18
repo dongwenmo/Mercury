@@ -15,6 +15,7 @@ public class ErrorConfig {
     public static final int ERR_10005 = 10005;// 登录：密码错误
     public static final int ERR_10006 = 10006;// 登录：该用户不存在
     public static final int ERR_10007 = 10007;// 注册：该用户已存在
+    public static final int ERR_10008 = 10008;// 非法登录，网络请求IP地址与token缓存中IP地址不一致
     
     // 参数校验
     public static final int ERR_11001 = 11001;// 参数不存在或值为空

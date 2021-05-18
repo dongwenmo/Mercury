@@ -52,15 +52,19 @@ public class RbacAspect {
                     throw new BusinessException(ErrorConfig.ERR_10001, "accessToken不存在");
                 }
                 UserCacheDTO user = UserCache.get(accessToken);
-                if(user == null){
+                if (user == null) {
                     throw new BusinessException(ErrorConfig.ERR_10004, "登录已过期");
                 }
-            }catch (BusinessException e){
+                
+                if (!user.getIp().equals(HttpUtil.getIP(request))) {
+                    throw new BusinessException(ErrorConfig.ERR_10008, "非法登录");
+                }
+            } catch (BusinessException e) {
                 return result.error(e);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return result.error(e.getMessage());
             }
-            
+
         }
         return proceedingJoinPoint.proceed();
     }
