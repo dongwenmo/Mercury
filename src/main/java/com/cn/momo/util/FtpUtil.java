@@ -92,7 +92,14 @@ public class FtpUtil {
         return path;
     }
 
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         downFile("hsa-ics-clct-generic-local-1.1.0.jar");
+    }
+
+
+    public static void main(String[] args) throws Exception{
+        String s = "楠岃瘉ssoticket澶辫触锛歋SOTicket鏃犳晥锛屾棤娉曡幏鍙栧瘑鐮侊紒";
+        String str = new String(s.getBytes("gbk"), "utf-8");
+        System.out.println(str);
     }
 }

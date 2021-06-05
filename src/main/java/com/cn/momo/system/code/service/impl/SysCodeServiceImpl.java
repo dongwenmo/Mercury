@@ -1,7 +1,7 @@
 package com.cn.momo.system.code.service.impl;
 
 import com.cn.momo.common.BaseServiceImpl;
-import com.cn.momo.config.DBConfig;
+import com.cn.momo.util.sql.config.DBConfig;
 import com.cn.momo.exception.BusinessException;
 import com.cn.momo.system.code.mapper.SysCodeMapper;
 import com.cn.momo.system.code.pojo.SysCode;

@@ -1,6 +1,6 @@
 package com.cn.momo.util;
 
-import com.cn.momo.config.DBConfig;
+import com.cn.momo.util.sql.config.DBConfig;
 import com.cn.momo.exception.BusinessException;
 
 import java.util.HashMap;

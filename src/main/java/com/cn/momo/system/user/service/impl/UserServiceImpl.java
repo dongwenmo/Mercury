@@ -1,7 +1,6 @@
 package com.cn.momo.system.user.service.impl;
 
-import com.cn.momo.common.UserSessionMap;
-import com.cn.momo.config.DBConfig;
+import com.cn.momo.util.sql.config.DBConfig;
 import com.cn.momo.config.ErrorConfig;
 import com.cn.momo.exception.BusinessException;
 import com.cn.momo.system.user.cache.UserCache;

@@ -1,15 +1,13 @@
 package com.cn.momo.system.para.service.impl;
 
 import com.cn.momo.common.BaseServiceImpl;
-import com.cn.momo.config.DBConfig;
+import com.cn.momo.util.sql.config.DBConfig;
 import com.cn.momo.system.para.pojo.SysPara;
 import com.cn.momo.system.para.service.ISysParaService;
 import com.cn.momo.util.DBUtil;
-import com.cn.momo.util.StringUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

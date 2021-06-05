@@ -1,4 +1,4 @@
-package com.cn.momo.config;
+package com.cn.momo.util.sql.config;
 
 /**
  * 数据库信息
