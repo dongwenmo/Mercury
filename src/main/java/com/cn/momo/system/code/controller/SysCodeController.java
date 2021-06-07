@@ -6,6 +6,7 @@ import com.cn.momo.system.code.service.ISysCodeService;
 import com.cn.momo.exception.BusinessException;
 import com.cn.momo.system.user.pojo.User;
 import com.cn.momo.util.CheckUtil;
+import com.cn.momo.util.ResultUtil;
 import com.cn.momo.util.StringUtil;
 import com.cn.momo.util.TransUtil;
 import com.google.gson.Gson;
@@ -38,7 +39,7 @@ public class SysCodeController {
                 throw new BusinessException("查询条件不能为空");
             }
             List<SysCode> sysCodes = iSysCodeService.select(sysCode);
-            if(!StringUtil.isNull(sysCode.getCodeGroup()) && !StringUtil.isNull(sysCode.getCodeKey())){
+            if (!StringUtil.isNull(sysCode.getCodeGroup()) && !StringUtil.isNull(sysCode.getCodeKey())) {
                 sysCodes = iSysCodeService.sort(sysCodes);
             }
             map.put("sysCodes", sysCodes);
@@ -155,18 +156,18 @@ public class SysCodeController {
         HashMap<String, Object> map = new HashMap<>();
         try {
 
-            CheckUtil.isNull(sysCode.getCodeGroup(),"组");
-            CheckUtil.isNull(sysCode.getCodeKey(),"键");
-            CheckUtil.isNull(sysCode.getName(),"参数名");
-            CheckUtil.isNull(sysCode.getCodeValue(),"值");
-            CheckUtil.isNull(sysCode.getContent(),"显示内容");
+            CheckUtil.isNull(sysCode.getCodeGroup(), "组");
+            CheckUtil.isNull(sysCode.getCodeKey(), "键");
+            CheckUtil.isNull(sysCode.getName(), "参数名");
+            CheckUtil.isNull(sysCode.getCodeValue(), "值");
+            CheckUtil.isNull(sysCode.getContent(), "显示内容");
 
             SysCode vCode = new SysCode();
             vCode.setCodeGroup(sysCode.getCodeGroup());
             vCode.setCodeKey(sysCode.getCodeKey());
             int count = iSysCodeService.selectCount(vCode);
 
-            sysCode.setPriority(count+1);
+            sysCode.setPriority(count + 1);
 
             iSysCodeService.insertSelective(sysCode);
             map.put("sysCode", sysCode);
@@ -292,23 +293,19 @@ public class SysCodeController {
     @PostMapping("/getSysCodeNames")
     @ResponseBody
     @CallLog(name = "getSysCodeNames", desc = "获取数据字典名称列表")
-    public String getSysCodeNames(User user, SysCode sysCode) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("sysCodeNames", iSysCodeService.getSysCodeNames(sysCode));
-        map.put("flag", 0);
-        map.put("msg", "");
-        return gson.toJson(map);
+    public String getSysCodeNames(User user, SysCode sysCode) throws BusinessException {
+        ResultUtil result = new ResultUtil();
+        result.put("sysCodeNames", iSysCodeService.getSysCodeNames(sysCode));
+        return result.success();
     }
 
     @PostMapping("/getGroups")
     @ResponseBody
     @CallLog(name = "getGroups", desc = "获取数据字典组列表")
-    public String getGroups(User user) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("codeGroups", iSysCodeService.getGroups());
-        map.put("flag", 0);
-        map.put("msg", "");
-        return gson.toJson(map);
+    public String getGroups(User user) throws BusinessException {
+        ResultUtil result = new ResultUtil();
+        result.put("codeGroups", iSysCodeService.getGroups());
+        return result.success();
     }
 
     @PostMapping("/move")

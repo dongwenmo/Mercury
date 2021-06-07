@@ -1,6 +1,5 @@
 package com.cn.momo.system.user.service.impl;
 
-import com.cn.momo.util.sql.config.DBConfig;
 import com.cn.momo.config.ErrorConfig;
 import com.cn.momo.exception.BusinessException;
 import com.cn.momo.system.user.cache.UserCache;
@@ -12,6 +11,7 @@ import com.cn.momo.system.user.pojo.User;
 import com.cn.momo.system.user.pojo.UserLogin;
 import com.cn.momo.system.user.service.IUserService;
 import com.cn.momo.util.*;
+import com.cn.momo.util.sql.SQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,14 +68,12 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User selectOne(User user) {
-        User rUser = null;
+    public User selectOne(User user) throws BusinessException {
         try {
-            rUser = userMapper.selectOne(user);
+            return userMapper.selectOne(user);
         } catch (Exception e) {
-            logger.error("查询结果不唯一");
+            throw new BusinessException("查询结果不唯一");
         }
-        return rUser;
     }
 
     @Override
@@ -148,10 +146,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public boolean checkUsernameExist(User user) {
         int userCount = userMapper.selectCount(user);
-        if (userCount > 0) {
-            return true;
-        }
-        return false;
+        return userCount > 0;
     }
 
     @Override
@@ -181,18 +176,17 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public HashMap<String, Object> sendCodeToMail(String username, String mailAccount) {
+    public HashMap<String, Object> sendCodeToMail(String username, String mailAccount) throws BusinessException {
         HashMap<String, Object> map = new HashMap<>();
 
         // 判断用户名、邮箱地址是否与数据库一致
-        StringBuffer sqlBF = new StringBuffer();
+        SQL sql = new SQL();
 
-        sqlBF.setLength(0);
-        sqlBF.append("  select user_id,username,identity_id  ");
-        sqlBF.append("    from user where username = ?     ");
-
-        List<Map<String, Object>> requestList = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString(),
-                username);
+        sql.clear();
+        sql.addSql("  select user_id,username,identity_id  ");
+        sql.addSql("    from user where username = ?     ");
+        sql.setPara(username);
+        List<Map<String, Object>> requestList = sql.query();
 
         if (requestList.size() == 0) {
             map.put("msg", "不存在该用户！");
@@ -208,13 +202,13 @@ public class UserServiceImpl implements IUserService {
             return map;
         }
 
-        sqlBF.setLength(0);
-        sqlBF.append("  select identity_id, email   ");
-        sqlBF.append("    from user_identity        ");
-        sqlBF.append("   where identity_id = ?      ");
+        sql.clear();
+        sql.addSql("  select identity_id, email   ");
+        sql.addSql("    from user_identity        ");
+        sql.addSql("   where identity_id = ?      ");
 
-        List<Map<String, Object>> identityList = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString(),
-                identityid);
+        sql.setPara(identityid);
+        List<Map<String, Object>> identityList = sql.query();
 
         if (identityList.size() == 0) {
             map.put("msg", "未获取到该用户实名认证信息！");
@@ -235,13 +229,13 @@ public class UserServiceImpl implements IUserService {
         Date effectiveTime = DateUtil.addMinute(new Date(), 5);
 
         // 将验证码存入数据库
-        sqlBF.setLength(0);
-        sqlBF.append("  update user_identity                 ");
-        sqlBF.append("     set code = ?, effective_time = ?  ");
-        sqlBF.append("   where identity_id = ?               ");
+        sql.clear();
+        sql.addSql("  update user_identity                 ");
+        sql.addSql("     set code = ?, effective_time = ?  ");
+        sql.addSql("   where identity_id = ?               ");
 
-        DBUtil.update(DBConfig.LOCALHOST, sqlBF.toString(),
-                code, effectiveTime, identityid);
+        sql.setPara(code, effectiveTime, identityid);
+        sql.update();
 
         // 发送邮件
         String subject = "unicorn修改密码验证码：" + code;
@@ -258,22 +252,22 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public HashMap<String, Object> modifyUserPasswordByMail(String username, String code, String newPassword) {
+    public HashMap<String, Object> modifyUserPasswordByMail(String username, String code, String newPassword) throws BusinessException {
         HashMap<String, Object> map = new HashMap<>();
 
         // 判断用户名与验证码是否与数据库一致
-        StringBuffer sqlBF = new StringBuffer();
+        SQL sql = new SQL();
 
-        sqlBF.setLength(0);
-        sqlBF.append("  select a.userid,a.username,b.email,b.code, b.effective_time  ");
-        sqlBF.append("    from user a,                             ");
-        sqlBF.append("         user_identity b                     ");
-        sqlBF.append("   where a.identityid = b.identity_id        ");
-        sqlBF.append("     and a.username = ?                      ");
-        sqlBF.append("     and b.code = ?                          ");
+        sql.clear();
+        sql.addSql("  select a.userid,a.username,b.email,b.code, b.effective_time  ");
+        sql.addSql("    from user a,                             ");
+        sql.addSql("         user_identity b                     ");
+        sql.addSql("   where a.identityid = b.identity_id        ");
+        sql.addSql("     and a.username = ?                      ");
+        sql.addSql("     and b.code = ?                          ");
 
-        List<Map<String, Object>> requestList = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString(),
-                username, code);
+        sql.setPara(username, code);
+        List<Map<String, Object>> requestList = sql.query();
 
         if (requestList.size() == 0) {
             map.put("msg", "验证码错误！");
@@ -291,12 +285,11 @@ public class UserServiceImpl implements IUserService {
         // 修改新密码
         String password = MD5Util.getMD5(newPassword, username);
 
-        sqlBF.setLength(0);
-        sqlBF.append("  update user set password = ?  ");
-        sqlBF.append("   where username = ?           ");
-
-        int count = DBUtil.update(DBConfig.LOCALHOST, sqlBF.toString(),
-                password, username);
+        sql.clear();
+        sql.addSql("  update user set password = ?  ");
+        sql.addSql("   where username = ?           ");
+        sql.setPara(password, username);
+        int count = sql.update();
 
         if (count == 0) {
             map.put("msg", "密码修改失败，请重试！");
@@ -310,21 +303,19 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public HashMap<String, Object> modifyUserPasswordByOldPassword(String username, String oldPassword, String newPassword) {
+    public HashMap<String, Object> modifyUserPasswordByOldPassword(String username, String oldPassword, String newPassword) throws BusinessException {
         HashMap<String, Object> map = new HashMap<>();
 
         // 判断用户名与旧密码是否与数据库一致
-        StringBuffer sqlBF = new StringBuffer();
-
-        sqlBF.setLength(0);
-        sqlBF.append("  select userid,username from user  ");
-        sqlBF.append("   where username = ?               ");
-        sqlBF.append("     and password = ?               ");
+        SQL sql = new SQL();
+        sql.clear();
+        sql.addSql("  select userid,username from user  ");
+        sql.addSql("   where username = ?               ");
+        sql.addSql("     and password = ?               ");
 
         oldPassword = MD5Util.getMD5(oldPassword, username);
-
-        List<Map<String, Object>> requestList = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString(),
-                username, oldPassword);
+        sql.setPara(username, oldPassword);
+        List<Map<String, Object>> requestList = sql.query();
 
         if (requestList.size() == 0) {
             map.put("msg", "原密码输入错误！");
@@ -335,12 +326,11 @@ public class UserServiceImpl implements IUserService {
         // 修改新密码
         newPassword = MD5Util.getMD5(newPassword, username);
 
-        sqlBF.setLength(0);
-        sqlBF.append("  update user set password = ?  ");
-        sqlBF.append("   where username = ?           ");
-
-        int count = DBUtil.update(DBConfig.LOCALHOST, sqlBF.toString(),
-                newPassword, username);
+        sql.clear();
+        sql.addSql("  update user set password = ?  ");
+        sql.addSql("   where username = ?           ");
+        sql.setPara(newPassword, username);
+        int count = sql.update();
 
         if (count == 0) {
             map.put("msg", "密码修改失败，请重试！");

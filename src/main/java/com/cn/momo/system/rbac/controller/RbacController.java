@@ -2,6 +2,7 @@ package com.cn.momo.system.rbac.controller;
 
 import com.cn.momo.annotation.CallLog;
 import com.cn.momo.annotation.Permission;
+import com.cn.momo.exception.BusinessException;
 import com.cn.momo.system.rbac.service.IRbacService;
 import com.cn.momo.system.user.service.IUserService;
 import com.cn.momo.util.CheckUtil;
@@ -32,7 +33,7 @@ public class RbacController {
     @Permission
     @PostMapping("/queryUserInfo")
     @CallLog(name = "queryUserInfo", desc = "查询用户信息")
-    public String queryUserInfo(){
+    public String queryUserInfo() throws BusinessException {
         ResultUtil result = new ResultUtil();
         List<Map<String, Object>> resultList = iRbacService.queryUserInfo(new HashMap<>());
         result.put("userInfo", resultList);

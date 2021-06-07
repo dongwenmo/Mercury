@@ -1,13 +1,12 @@
 package com.cn.momo.system.code.service.impl;
 
 import com.cn.momo.common.BaseServiceImpl;
-import com.cn.momo.util.sql.config.DBConfig;
 import com.cn.momo.exception.BusinessException;
 import com.cn.momo.system.code.mapper.SysCodeMapper;
 import com.cn.momo.system.code.pojo.SysCode;
 import com.cn.momo.system.code.service.ISysCodeService;
-import com.cn.momo.util.DBUtil;
 import com.cn.momo.util.StringUtil;
+import com.cn.momo.util.sql.SQL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,36 +23,36 @@ public class SysCodeServiceImpl extends BaseServiceImpl<SysCode> implements ISys
     private SysCodeMapper sysCodeMapper;
 
     @Override
-    public List<Map<String, Object>> getSysCodeNames(SysCode sysCode) {
-        StringBuffer sqlBF = new StringBuffer();
+    public List<Map<String, Object>> getSysCodeNames(SysCode sysCode) throws BusinessException {
+        SQL sql = new SQL();
         List<Map<String, Object>> list;
 
         String codeKey = sysCode.getCodeKey();
         String codeGroup = sysCode.getCodeGroup();
 
-        sqlBF.setLength(0);
-        sqlBF.append("  select code_group codeGroup,code_key codeKey,name  ");
-        sqlBF.append("    from sys_code                                    ");
-        sqlBF.append("   where code_key like ?                             ");
-        sqlBF.append("     and code_group like ?                           ");
-        sqlBF.append("   group by code_group,code_key,name                 ");
-        sqlBF.append("   order by code_key,code_group                      ");
+        sql.clear();
+        sql.addSql("  select code_group codeGroup,code_key codeKey,name  ");
+        sql.addSql("    from sys_code                                    ");
+        sql.addSql("   where code_key like ?                             ");
+        sql.addSql("     and code_group like ?                           ");
+        sql.addSql("   group by code_group,code_key,name                 ");
+        sql.addSql("   order by code_key,code_group                      ");
 
-        list = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString(),
-                StringUtil.supperQueryLike(codeKey), StringUtil.queryLike(codeGroup));
+        sql.setPara(StringUtil.supperQueryLike(codeKey), StringUtil.queryLike(codeGroup));
+        list = sql.query();
 
         return list;
     }
 
     @Override
-    public List<String> getGroups() {
+    public List<String> getGroups() throws BusinessException {
         List<String> list = new ArrayList<>();
-        StringBuffer sqlBF = new StringBuffer();
+        SQL sql = new SQL();
 
-        sqlBF.setLength(0);
-        sqlBF.append("  select distinct code_group from sys_code order by code_group  ");
+        sql.clear();
+        sql.addSql("  select distinct code_group from sys_code order by code_group  ");
 
-        List<Map<String, Object>> requestList = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString());
+        List<Map<String, Object>> requestList = sql.query();
         for (Map<String, Object> i : requestList) {
             list.add((String) i.get("code_group"));
         }

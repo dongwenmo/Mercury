@@ -1,7 +1,7 @@
 package com.cn.momo.util;
 
-import com.cn.momo.util.sql.config.DBConfig;
 import com.cn.momo.exception.BusinessException;
+import com.cn.momo.util.sql.SQL;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,17 +11,16 @@ public class AppUtil {
 
     // 根据代码编号获取字典对应关系
     public static List<Map<String, Object>> getCode(String dmbh) throws BusinessException {
-        StringBuffer sqlBF = new StringBuffer();
+        SQL sql = new SQL();
 
-        sqlBF.setLength(0);
-        sqlBF.append("  select code,content  ");
-        sqlBF.append("    from mineark2.code ");
-        sqlBF.append("   where dmbh = ?      ");
-        sqlBF.append("     and dbid is null  ");
-        sqlBF.append("   order by xh         ");
-
-        List<Map<String, Object>> requestList = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString(),
-                dmbh);
+        sql.clear();
+        sql.addSql("  select code,content  ");
+        sql.addSql("    from mineark2.code ");
+        sql.addSql("   where dmbh = ?      ");
+        sql.addSql("     and dbid is null  ");
+        sql.addSql("   order by xh         ");
+        sql.setPara(dmbh);
+        List<Map<String, Object>> requestList = sql.query();
 
         if (requestList.size() == 0) {
             throw new BusinessException("未在字典表中维护【" + dmbh + "】的对应关系！");
@@ -44,18 +43,17 @@ public class AppUtil {
 
     // 取code中文含义
     public static String discode(String dmbh, String code) throws BusinessException {
-        StringBuffer sqlBF = new StringBuffer();
+        SQL sql = new SQL();
 
-        sqlBF.setLength(0);
-        sqlBF.append("  select code,content  ");
-        sqlBF.append("    from mineark2.code ");
-        sqlBF.append("   where dmbh = ?      ");
-        sqlBF.append("     and code = ?      ");
-        sqlBF.append("     and dbid is null  ");
-        sqlBF.append("   order by xh         ");
-
-        List<Map<String, Object>> requestList = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString(),
-                dmbh, code);
+        sql.clear();
+        sql.addSql("  select code,content  ");
+        sql.addSql("    from mineark2.code ");
+        sql.addSql("   where dmbh = ?      ");
+        sql.addSql("     and code = ?      ");
+        sql.addSql("     and dbid is null  ");
+        sql.addSql("   order by xh         ");
+        sql.setPara(dmbh, code);
+        List<Map<String, Object>> requestList = sql.query();
         if (requestList.size() == 0) {
             throw new BusinessException("discode出错：代码编号【" + dmbh + "】代码值【" + code + "】不存在！");
         }
@@ -74,16 +72,14 @@ public class AppUtil {
 
     // 取系统参数
     public static String getSystemPara(String csbh) throws BusinessException {
-        StringBuffer sqlBF = new StringBuffer();
+        SQL sql = new SQL();
+        sql.clear();
+        sql.addSql("  select para_value    ");
+        sql.addSql("    from sys_para   ");
+        sql.addSql("   where para_key = ? ");
+        sql.setPara(csbh);
 
-        sqlBF.setLength(0);
-        sqlBF.append("  select para_value    ");
-        sqlBF.append("    from sys_para   ");
-        sqlBF.append("   where para_key = ? ");
-
-
-        List<Map<String, Object>> requestList = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString(),
-                csbh);
+        List<Map<String, Object>> requestList = sql.query();
         if (requestList.size() == 0) {
             throw new BusinessException("未在参数表中维护【" + csbh + "】的值!");
         }
@@ -105,17 +101,15 @@ public class AppUtil {
      * dongwenmo 2021-03-16
      */
     public static String getCodeContent(String group, String key, String value) throws BusinessException {
-        StringBuffer sqlBF = new StringBuffer();
-
-        sqlBF.setLength(0);
-        sqlBF.append("  select content         ");
-        sqlBF.append("    from sys_code        ");
-        sqlBF.append("   where code_group = ?  ");
-        sqlBF.append("     and code_key = ?    ");
-        sqlBF.append("     and code_value = ?  ");
-
-        List<Map<String, Object>> requestList = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString(),
-                group, key, value);
+        SQL sql = new SQL();
+        sql.clear();
+        sql.addSql("  select content         ");
+        sql.addSql("    from sys_code        ");
+        sql.addSql("   where code_group = ?  ");
+        sql.addSql("     and code_key = ?    ");
+        sql.addSql("     and code_value = ?  ");
+        sql.setPara(group, key, value);
+        List<Map<String, Object>> requestList = sql.query();
         if (requestList.size() == 0) {
             throw new BusinessException("未在参数表中维护【" + key + "】【" + value + "】的值!");
         }

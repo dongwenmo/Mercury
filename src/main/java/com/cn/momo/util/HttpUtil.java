@@ -35,8 +35,11 @@ public class HttpUtil {
      * 通过request获取IP
      * dongwenmo 2021-05-15
      */
-    public static String getIP(HttpServletRequest request) throws BusinessException {
-        String ip = request.getHeader("x-forwarded-for");
+    public static String getIP(HttpServletRequest request) {
+        String ip = request.getHeader("X-Real-IP");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Forwarded-For");
+        }
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }

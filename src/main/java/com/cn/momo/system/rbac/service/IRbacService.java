@@ -17,7 +17,7 @@ public interface IRbacService {
 	 * 查询用户信息
 	 * dongwenmo 2021-01-16
 	 */
-	List<Map<String, Object>> queryUserInfo(Map<String,Object> map);
+	List<Map<String, Object>> queryUserInfo(Map<String,Object> map) throws BusinessException;
 
 	/**
 	 * 获取用户拥有权限的菜单

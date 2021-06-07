@@ -16,13 +16,13 @@ public interface ISysCodeService extends IBaseService<SysCode> {
      * 获取数据字典名称列表
      * dongwenmo 2021-02-02
      */
-    List<Map<String,Object>> getSysCodeNames(SysCode sysCode);
+    List<Map<String,Object>> getSysCodeNames(SysCode sysCode) throws BusinessException;
 
     /**
      * 获取数据字典组列表
      * dongwenmo 2021-02-02
      */
-    List<String> getGroups();
+    List<String> getGroups() throws BusinessException;
 
     /**
      * 数据字典移动

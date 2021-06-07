@@ -126,7 +126,7 @@ public class LoginController extends SupperController {
     @PostMapping("/sendCodeToMail")
     @ResponseBody
     @CallLog(name = "sendCodeToMail", desc = "通过用户名、邮箱地址发送验证码（忘记密码）")
-    public String sendCodeToMail(User user, String username, String mailAccount) {
+    public String sendCodeToMail(User user, String username, String mailAccount) throws BusinessException {
         HashMap<String, Object> map = iUserService.sendCodeToMail(username, mailAccount);
         return gson.toJson(map);
     }
@@ -143,7 +143,7 @@ public class LoginController extends SupperController {
     @PostMapping("/modifyUserPasswordByMail")
     @ResponseBody
     @CallLog(name = "modifyUserPasswordByMail", desc = "通过用户名、邮箱验证码修改密码（忘记密码）")
-    public String modifyUserPasswordByMail(User user, String username, String code, String newPassword) {
+    public String modifyUserPasswordByMail(User user, String username, String code, String newPassword) throws BusinessException {
         HashMap<String, Object> map = iUserService.modifyUserPasswordByMail(username, code, newPassword);
         return gson.toJson(map);
     }
@@ -160,7 +160,7 @@ public class LoginController extends SupperController {
     @PostMapping("/modifyUserPasswordByOldPassword")
     @ResponseBody
     @CallLog(name = "modifyUserPasswordByOldPassword", desc = "通过用户名、原密码修改密码（修改密码）")
-    public String modifyUserPasswordByOldPassword(User user, String username, String oldPassword, String newPassword) {
+    public String modifyUserPasswordByOldPassword(User user, String username, String oldPassword, String newPassword) throws BusinessException {
         HashMap<String, Object> map = iUserService.modifyUserPasswordByOldPassword(username, oldPassword, newPassword);
         return gson.toJson(map);
     }

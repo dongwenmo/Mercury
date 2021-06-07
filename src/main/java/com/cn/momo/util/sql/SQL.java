@@ -1,11 +1,7 @@
 package com.cn.momo.util.sql;
 
 import com.cn.momo.exception.BusinessException;
-import com.cn.momo.system.dbms.mapper.DbmsDatasourceMapper;
 import com.cn.momo.util.StringUtil;
-import com.cn.momo.util.sql.config.DBConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.*;
@@ -16,23 +12,26 @@ import java.util.*;
 public class SQL {
     private static Map<String, DBConfig> dsCache = new HashMap<>();
     private StringBuffer sqlBF;
-    private DBConfig dataSource;
+    private DataSource dataSource;
     private List<Object> paras;
 
     private Connection conn;
     private PreparedStatement ptmt;
     private ResultSet rs;
 
-    public SQL() {
+    public SQL() throws BusinessException {
         this.sqlBF = new StringBuffer();
         this.paras = new ArrayList<>();
-        this.dataSource = DBConfig.LOCALHOST;
+        this.dataSource = DBConfig.getDataSource("default");
     }
 
-    public SQL(DBConfig dbConfig) {
+    public SQL(String dsName) throws BusinessException {
         this.sqlBF = new StringBuffer();
         this.paras = new ArrayList<>();
-        this.dataSource = dbConfig;
+        if(StringUtil.isNull(dsName)){
+            dsName = "default";
+        }
+        this.dataSource = DBConfig.getDataSource(dsName);
     }
 
     // 添加sql

@@ -29,7 +29,7 @@ public interface IUserService {
 	User selectByPrimaryKey(int userid);
 
 	// 条件查询单个对象
-	User selectOne(User user);
+	User selectOne(User user) throws BusinessException;
 
 	// 验证用户登录
 	User doLogin(User user) throws BusinessException;
@@ -47,11 +47,11 @@ public interface IUserService {
 	int insert(User user);
 
 	// 通过用户名、邮箱地址发送验证码（忘记密码）
-	HashMap<String,Object> sendCodeToMail(String username, String mailAccount);
+	HashMap<String,Object> sendCodeToMail(String username, String mailAccount) throws BusinessException;
 
 	// 通过用户名、邮箱验证码修改密码（忘记密码）
-	HashMap<String,Object> modifyUserPasswordByMail(String username, String code, String newPassword);
+	HashMap<String,Object> modifyUserPasswordByMail(String username, String code, String newPassword) throws BusinessException;
 
 	// 通过用户名、原密码修改密码（修改密码）
-	HashMap<String,Object> modifyUserPasswordByOldPassword(String username, String oldPassword, String newPassword);
+	HashMap<String,Object> modifyUserPasswordByOldPassword(String username, String oldPassword, String newPassword) throws BusinessException;
 }

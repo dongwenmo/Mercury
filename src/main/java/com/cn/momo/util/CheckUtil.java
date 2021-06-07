@@ -1,8 +1,8 @@
 package com.cn.momo.util;
 
-import com.cn.momo.util.sql.config.DBConfig;
 import com.cn.momo.config.ErrorConfig;
 import com.cn.momo.exception.BusinessException;
+import com.cn.momo.util.sql.SQL;
 
 import java.util.List;
 import java.util.Map;
@@ -51,12 +51,11 @@ public class CheckUtil {
      * dongwenmo 2021-03-30
      */
     public static void isInCode(String param, String desc, String code, String group) throws BusinessException {
-        StringBuffer sqlBF = new StringBuffer();
-
-        sqlBF.setLength(0);
-        sqlBF.append("  select code_value from sys_code where code_group = ? and code_key = ?  ");
-        List<Map<String, Object>> requestList = DBUtil.query(DBConfig.LOCALHOST, sqlBF.toString(),
-                group, code);
+        SQL sql = new SQL();
+        sql.clear();
+        sql.addSql("  select code_value from sys_code where code_group = ? and code_key = ?  ");
+        sql.setPara(group, code);
+        List<Map<String, Object>> requestList = sql.query();
 
         int size = requestList.size();
         if (size == 0) {
