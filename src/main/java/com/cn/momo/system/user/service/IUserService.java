@@ -38,7 +38,7 @@ public interface IUserService {
 	String loginForToken(LoginUserDTO user) throws BusinessException;
 
 	// 判断用户名是否存在
-	boolean checkUsernameExist(User user);
+	void checkUsernameExist(String username) throws BusinessException;
 
 	// 用户注册
 	User register(User user) throws BusinessException;

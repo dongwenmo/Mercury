@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class MapperUtil<T> {
     /**
-     * List<map> mapper 装载 为List<?>
+     * List<map> mapper 装载为List<?>
      */
     public List<T> mapperList(List<Map<String,Object>> maplist, Class<T> t) throws BusinessException {
         List<T> rtnlist=new ArrayList<>();

@@ -57,12 +57,4 @@ public class HttpUtil {
         }
         return ip;
     }
-
-    /**
-     * 获取用户IP
-     * dongwenmo 2021-05-15
-     */
-    public static String getUserIP(HttpServletRequest request) throws BusinessException {
-        return getIP();
-    }
 }

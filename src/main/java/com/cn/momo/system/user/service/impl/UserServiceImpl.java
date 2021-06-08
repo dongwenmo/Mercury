@@ -30,7 +30,6 @@ import java.util.Map;
  */
 @Service
 public class UserServiceImpl implements IUserService {
-    private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     private UserMapper userMapper;
     @Autowired
@@ -144,9 +143,13 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public boolean checkUsernameExist(User user) {
-        int userCount = userMapper.selectCount(user);
-        return userCount > 0;
+    public void checkUsernameExist(String username) throws BusinessException {
+        User user = new User();
+        user.setUsername(username);
+        int count = userMapper.selectCount(user);
+        if(count > 0){
+            throw new BusinessException(ErrorConfig.ERR_10007, "该用户已存在");
+        }
     }
 
     @Override
@@ -155,9 +158,7 @@ public class UserServiceImpl implements IUserService {
         CheckUtil.isNull(user.getUsername(), "用户名");
         CheckUtil.isNull(password, "密码");
         CheckUtil.isNull(user.getLastIp(), "IP地址");
-        if (checkUsernameExist(user)) {
-            throw new BusinessException(ErrorConfig.ERR_10007, "该用户已存在");
-        }
+        checkUsernameExist(user.getUsername());
 
         user.setCreateTime(new Date());
         user.setPassword(MD5Util.getMD5(password, user.getUsername()));

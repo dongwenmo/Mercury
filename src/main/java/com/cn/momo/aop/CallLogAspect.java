@@ -72,7 +72,7 @@ public class CallLogAspect {
             ResultUtil resultUtil = new ResultUtil();
             result = resultUtil.error(-1, "系统异常");
             logger.error("异常 :  {}", e.getMessage());
-//            logger.error("异常 :  ", e);
+            logger.error("异常 :  ", e);
         }
 
         long timeLog = System.currentTimeMillis() - startTime;
