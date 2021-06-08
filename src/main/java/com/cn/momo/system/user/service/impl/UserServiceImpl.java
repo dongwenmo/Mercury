@@ -12,8 +12,6 @@ import com.cn.momo.system.user.pojo.UserLogin;
 import com.cn.momo.system.user.service.IUserService;
 import com.cn.momo.util.*;
 import com.cn.momo.util.sql.SQL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
